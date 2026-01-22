@@ -17,6 +17,7 @@
     "mongodb": "^7.0.0",
     "mongodb-connection-string-url": "^7.0.0",
     "object-assign": "^4.1.1",
-    "vary": "^1.1.2"
+    "vary": "^1.1.2",
+    "whatwg-url": "^15.1.0"
   }
 }
