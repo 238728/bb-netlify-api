@@ -26,6 +26,9 @@ importers:
       object-assign:
         specifier: ^4.1.1
         version: 4.1.1
+      sparse-bitfield:
+        specifier: ^3.0.3
+        version: 3.0.3
       vary:
         specifier: ^1.1.2
         version: 1.1.2
