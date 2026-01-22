@@ -17,6 +17,9 @@ importers:
       mongodb:
         specifier: ^7.0.0
         version: 7.0.0
+      mongodb-connection-string-url:
+        specifier: ^7.0.0
+        version: 7.0.0
 
 packages:
 

@@ -13,6 +13,7 @@
   "dependencies": {
     "@mongodb-js/saslprep": "^1.4.5",
     "cors": "^2.8.5",
-    "mongodb": "^7.0.0"
+    "mongodb": "^7.0.0",
+    "mongodb-connection-string-url": "^7.0.0"
   }
 }
