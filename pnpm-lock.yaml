@@ -17,6 +17,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      memory-pager:
+        specifier: ^1.5.0
+        version: 1.5.0
       mongodb:
         specifier: ^7.0.0
         version: 7.0.0
