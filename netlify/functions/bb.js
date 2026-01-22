@@ -1,8 +1,8 @@
-// netlify/functions/bb.js（最终版，含删除功能）
+// netlify/functions/bb.js（Token令牌版）
 require('dotenv').config();
-const { MongoClient, ObjectId } = require('mongodb'); // 新增ObjectId，用于转换说说ID
+const { MongoClient, ObjectId } = require('mongodb');
 
-// MongoDB连接逻辑（不变，保留超时配置）
+// MongoDB连接逻辑（不变）
 let mongoClient;
 async function connectMongo() {
   if (mongoClient) return mongoClient;
@@ -21,18 +21,37 @@ async function connectMongo() {
   return mongoClient;
 }
 
-// 跨域头配置（不变，新增DELETE到允许的方法）
+// 跨域头配置（新增允许Authorization请求头）
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS, HEAD', // 新增DELETE
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS, HEAD',
+  // 🔥 新增：允许Authorization请求头（携带Token）
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
   'Access-Control-Max-Age': '86400',
   'Content-Type': 'application/json; charset=utf-8'
 };
 
-// Netlify Functions核心处理（新增DELETE逻辑）
+// 🔥 核心：管理员Token校验函数
+function checkAdminToken(event) {
+  // 1. 从Netlify环境变量读取管理员Token（安全存储）
+  const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+  if (!ADMIN_TOKEN) return false;
+
+  // 2. 从请求头获取Authorization字段（格式：Bearer <Token>）
+  const authHeader = event.headers.authorization || event.headers.Authorization;
+  if (!authHeader) return false;
+
+  // 3. 解析Token（去掉Bearer前缀，忽略大小写/空格）
+  const [bearer, token] = authHeader.split(' ');
+  if (!bearer || bearer.toLowerCase() !== 'bearer' || !token) return false;
+
+  // 4. 校验Token是否匹配
+  return token.trim() === ADMIN_TOKEN.trim();
+}
+
+// Netlify Functions核心处理
 exports.handler = async (event) => {
-  // 1. 处理OPTIONS预检请求（兼容DELETE的预检）
+  // 处理OPTIONS预检请求（必须允许Authorization头）
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 204,
@@ -46,7 +65,7 @@ exports.handler = async (event) => {
     const db = client.db('shuo');
     const shuoCollection = db.collection('shuolist');
 
-    // 2. GET请求：查询说说（不变）
+    // 1. GET请求：无需Token，保持开放
     if (event.httpMethod === 'GET') {
       const shuos = await shuoCollection.find({})
         .sort({ createdAt: -1 })
@@ -67,8 +86,18 @@ exports.handler = async (event) => {
       };
     }
 
-    // 3. POST请求：发布说说（不变）
+    // 2. POST请求：发布说说（需合法Token）
     if (event.httpMethod === 'POST') {
+      // 🔥 先校验Token，不通过直接返回权限不足
+      if (!checkAdminToken(event)) {
+        return {
+          statusCode: 403,
+          headers: CORS_HEADERS,
+          body: JSON.stringify({ code: 403, error: '权限不足：请携带合法的管理员Token' })
+        };
+      }
+
+      // Token校验通过，再校验内容
       const body = JSON.parse(event.body || '{}');
       if (!body.content || body.content.trim() === '') {
         return {
@@ -78,6 +107,7 @@ exports.handler = async (event) => {
         };
       }
 
+      // 执行发布操作
       const newShuo = {
         content: body.content.trim(),
         createTime: new Date().toLocaleString('zh-CN', {
@@ -93,16 +123,23 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ code: 200, message: '发布成功' })
+        body: JSON.stringify({ code: 200, message: '发布成功（管理员Token验证通过）' })
       };
     }
 
-    // 🔥 新增：DELETE请求：删除说说（核心删除逻辑）
+    // 3. DELETE请求：删除说说（需合法Token）
     if (event.httpMethod === 'DELETE') {
-      // 从请求参数中获取说说ID（支持URL参数或JSON body）
+      // 🔥 先校验Token
+      if (!checkAdminToken(event)) {
+        return {
+          statusCode: 403,
+          headers: CORS_HEADERS,
+          body: JSON.stringify({ code: 403, error: '权限不足：请携带合法的管理员Token' })
+        };
+      }
+
+      // Token校验通过，再校验ID
       const { id } = event.queryStringParameters || JSON.parse(event.body || '{}');
-      
-      // 校验ID是否存在且合法
       if (!id) {
         return {
           statusCode: 400,
@@ -110,8 +147,6 @@ exports.handler = async (event) => {
           body: JSON.stringify({ code: 400, error: '缺少说说ID，无法删除' })
         };
       }
-
-      // 校验ID格式（MongoDB的ObjectId必须是24位十六进制字符串）
       if (!ObjectId.isValid(id)) {
         return {
           statusCode: 400,
@@ -122,8 +157,6 @@ exports.handler = async (event) => {
 
       // 执行删除操作
       const deleteResult = await shuoCollection.deleteOne({ _id: new ObjectId(id) });
-      
-      // 判断是否删除成功（matchedCount=1表示找到并删除）
       if (deleteResult.deletedCount === 0) {
         return {
           statusCode: 404,
@@ -135,11 +168,11 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ code: 200, message: '删除成功' })
+        body: JSON.stringify({ code: 200, message: '删除成功（管理员Token验证通过）' })
       };
     }
 
-    // 4. 不支持的请求方法
+    // 不支持的请求方法
     return {
       statusCode: 405,
       headers: CORS_HEADERS,
