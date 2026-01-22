@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "@mongodb-js/saslprep": "^1.4.5",
+    "bson": "^7.1.1",
     "cors": "^2.8.5",
     "mongodb": "^7.0.0",
     "mongodb-connection-string-url": "^7.0.0",
