@@ -35,6 +35,9 @@ importers:
       vary:
         specifier: ^1.1.2
         version: 1.1.2
+      webidl-conversions:
+        specifier: ^8.0.1
+        version: 8.0.1
       whatwg-url:
         specifier: ^15.1.0
         version: 15.1.0
