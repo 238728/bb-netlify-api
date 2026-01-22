@@ -1,0 +1,8 @@
+# netlify.toml（独立API服务的配置）
+[build]
+  functions = "netlify/functions" # 仅指定函数目录，无需构建前端
+  publish = "." # 空发布目录（仅部署函数，无静态页面）
+
+[dev]
+  port = 8888 # 本地调试端口
+  functionsPort = 9999

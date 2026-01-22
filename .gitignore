@@ -1,0 +1,50 @@
+# -------------------------- 核心Node.js忽略项 --------------------------
+# 依赖目录（Node.js安装的包，无需提交）
+node_modules/
+# npm/yarn/pnpm的日志文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# 包管理的临时文件
+package-lock.json.bak
+yarn.lock.bak
+
+# -------------------------- 环境变量（关键！） --------------------------
+# 本地调试用的环境变量文件（包含MongoDB_URI等敏感信息，绝对不能提交）
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# -------------------------- Netlify本地文件 --------------------------
+# Netlify CLI生成的本地缓存/配置（仅本地调试用）
+.netlify/
+# Netlify构建的临时文件
+netlify.toml.bak
+
+# -------------------------- 编辑器/IDE忽略项 --------------------------
+# VSCode配置（如果用其他编辑器，可添加对应项，如.idea/ for WebStorm）
+.vscode/
+.idea/
+# Vim临时文件
+*.swp
+*.swo
+# Emacs临时文件
+*~
+\#*#
+
+# -------------------------- 系统/临时文件 --------------------------
+# Mac系统文件
+.DS_Store
+# Windows系统文件
+Thumbs.db
+desktop.ini
+# 日志文件
+*.log
+# 临时目录
+tmp/
+temp/
+# 压缩包
+*.zip
+*.tar.gz
