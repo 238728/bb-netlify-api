@@ -1,5 +1,5 @@
 {
-  "name": "bb-api",
+  "name": "bb-netlify-api",
   "compatibility_date": "2026-01-23",
   "main": "src/bb.js"
 }
