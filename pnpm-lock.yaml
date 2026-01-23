@@ -38,6 +38,9 @@ importers:
       sparse-bitfield:
         specifier: ^3.0.3
         version: 3.0.3
+      timers:
+        specifier: ^0.1.1
+        version: 0.1.1
       tr46:
         specifier: ^6.0.0
         version: 6.0.0
@@ -689,6 +692,9 @@ packages:
     resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==, tarball: https://registry.npmjs.org/supports-color/-/supports-color-10.2.2.tgz}
     engines: {node: '>=18'}
 
+  timers@0.1.1:
+    resolution: {integrity: sha512-pkJC8uIP/gxDHxNQUBUbjHyl6oZfT+ofn7tbaHW+CFIUjI+Q2MBbHcx1JSBQfhDaTcO9bNg328q0i7Vk5PismQ==, tarball: https://registry.npmjs.org/timers/-/timers-0.1.1.tgz}
+
   tr46@5.1.1:
     resolution: {integrity: sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==, tarball: https://registry.npmjs.org/tr46/-/tr46-5.1.1.tgz}
     engines: {node: '>=18'}
@@ -1306,6 +1312,8 @@ snapshots:
       memory-pager: 1.5.0
 
   supports-color@10.2.2: {}
+
+  timers@0.1.1: {}
 
   tr46@5.1.1:
     dependencies:
